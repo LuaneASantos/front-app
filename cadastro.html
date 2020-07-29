@@ -1,0 +1,154 @@
+<html ng-app="myApp">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="cadastro.css" />
+    <title>Cadastro de Curso</title>
+
+    <meta charset="utf-8" />
+
+    <script src="https://code.jquery.com/jquery-3.2.1.js"
+        integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+
+    <script src="controller.js"> </script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+
+</head>
+
+<body ng-controller="myCtrl">
+
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Cadastro</h3>
+        </div>
+
+
+        <div class="panel-body">
+
+            <form>
+
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <h3>Dados Pessoais </h3>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <input type="text" class="form-control" placeholder="Nome" ng-model="pessoa.nome" />
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <select class="form-control" ng-model="pessoa.sexo">
+                            <option value="">Sexo</option>
+                            <option value="0">Mascculino</option>
+                            <option value="1">Feminino</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <input type="text" class="form-control" placeholder="E-mail" ng-model="pessoa.email" />
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <input type="date" class="form-control" placeholder="Data nascimento"
+                            ng-model="pessoa.nascimento" />
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <input type="text" class="form-control" placeholder="Naturalidade"
+                            ng-model="pessoa.naturalidade" />
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <input type="text" class="form-control" placeholder="Nacionalidade"
+                            ng-model="pessoa.nacionalidade" />
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <input type="text" class="form-control" placeholder="CPF" ng-model="pessoa.cpf" />
+                    </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="form-group col-md-1">
+            <button type="button" class="btn btn-success form-control" ng-click=salvar()>Salvar</button>
+        </div>
+    </div>
+
+    </div>
+</body>
+
+<script>
+
+    var app = angular.module('myApp', []);
+
+    app.controller('myCtrl', function ($scope) {
+
+
+        var cadastradas = [];
+
+
+        $scope.salvar = function () {
+
+            const json = JSON.stringify({
+                grant_type: 'password',
+                username: 'appuser',
+                password: '123'
+            })
+            fetch("http://localhost:8080/oauth/token", {
+                method: "POST",
+                headers: {
+                    "Content-type": "aplication/json",
+                    'Access-Control-Allow-Origin': '*',
+                    'Authorization': 'Basic YXBwOjEyMw==',
+                    'Accept': '*/*',
+                    'Access-Control-Allow-Methods': 'OPTIONS, GET, POST, PUT, PATCH, DELETE',
+                    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+                },
+                body: json
+            })
+                .then(resp => {
+                    if (resp.body) {
+
+                        fetch("http://localhost:8080/api/client/new", {
+                            method: "POST",
+                            headers: {
+                                "Content-type": "aplication/json",
+                                'Access-Control-Allow-Origin': '*',
+                                'Authorization': 'Bearer ' + resp.body.access_token,
+                                'Accept': '*/*',
+                                'Access-Control-Allow-Methods': 'OPTIONS, GET, POST, PUT, PATCH, DELETE',
+                                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+                            },
+                            body: $scope
+                        })
+
+                    }
+                }).catch(error => {
+                    console.log(error);
+                })
+
+        }
+
+    });
+
+
+</script>
+
+</html>
